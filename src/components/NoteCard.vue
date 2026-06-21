@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import Button from './Button.vue';
-import { useNotesStore } from '@/stores/note'
+import { useNotesStore } from '../stores/note'
 import { useRouter } from 'vue-router'
 import {ref} from 'vue'
 
@@ -66,8 +66,8 @@ const options = {
 const store = useNotesStore()
 const supprime = ref(false)
 
-function supprimer() {
-  store.supprimerNote(props.id);
+async function supprimer() {
+  await store.supprimerNote(props.id);
   supprime.value = true;
   setTimeout(() => supprime.value = false, 3000);
 }

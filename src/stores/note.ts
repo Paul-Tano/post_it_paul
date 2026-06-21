@@ -69,7 +69,7 @@ export const useNotesStore = defineStore('notes', () => {
             const data = await res.json()
             console.log('réponse API:', data)
             const index = notes.value.findIndex(n => n._id === id)
-          if (index !== -1) notes.value[index] = { ...notes.value[index], ...noteModifiee }
+          if (index !== -1) notes.value[index] = { ...notes.value[index], ...noteModifiee } as Note
         } catch (e) {
             error.value = (e as Error).message
         }

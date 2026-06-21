@@ -2,9 +2,9 @@
 import NoteCard from './NoteCard.vue';
 import SearchBar from './SearchBar.vue';
 import { reactive, computed, ref } from 'vue';
-import {useNotesStore} from '@/stores/note'
+import {useNotesStore} from '../stores/note'
 import { onMounted, onUnmounted } from 'vue';
-import { Note } from '../stores/note';
+import type { Note } from '../stores/note';
 
 const cards = reactive([
     { rotate: -1.5, color: "#F2D785" },  //jaune
@@ -41,17 +41,8 @@ const visiblePages= computed(() => {
     return Array.from({ length: end - start + 1 }, (_, i) => start + i)
 })
 
-let interval: ReturnType<typeof setInterval>
-
 onMounted(() => {
   store.fetchNotes()
-  interval = setInterval(() => {
-    store.fetchNotes()
-  }, 5000)
-})
-
-onUnmounted(() => {
-  clearInterval(interval)
 })
 
 const getCard = (index: number) => {
@@ -81,7 +72,7 @@ const getCard = (index: number) => {
                   :bgCard="getCard(index).color"
                   :rotation="getCard(index).rotate"
                   :title="note.title.slice(0, 30) + '...'"
-                  :content="[note.content[0].slice(0, 30) + '...']"
+                  :content="[note.content[0]?.slice(0, 30) + '...']"
                   :createdAt="note.createdAt"/>
               </div>
 

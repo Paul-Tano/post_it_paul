@@ -1,5 +1,5 @@
 <script setup>
-import { useNotesStore } from '@/stores/note';
+import { useNotesStore } from '../stores/note';
 import { reactive, ref } from 'vue';
 
 const props = defineProps({

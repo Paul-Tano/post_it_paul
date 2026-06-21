@@ -61,8 +61,8 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useNotesStore } from '@/stores/note'
-import { Note } from '@/stores/note'
+import { useNotesStore } from '../stores/note'
+import type { Note } from '../stores/note'
 import { computed } from 'vue'
 import { ArrowLeft } from '@lucide/vue'
 import { onMounted, ref } from 'vue'
@@ -112,8 +112,8 @@ const options = {
 } as const
 
 const supprimerAlert = ref(false)
-function supprimer() {
-  store.supprimerNote(id)
+async function supprimer() {
+  await store.supprimerNote(id)
   supprimerAlert.value = true;
   setTimeout(() => { supprimerAlert.value = false;   router.back()
  }, 3000);

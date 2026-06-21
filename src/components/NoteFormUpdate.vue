@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useNotesStore } from '@/stores/note';
-import { Note } from '@/stores/note';
+import { useNotesStore } from '../stores/note';
+import type { Note } from '../stores/note';
 import { useRoute} from 'vue-router';
 import { computed, reactive, ref } from 'vue';
 
