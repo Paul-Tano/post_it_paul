@@ -3,6 +3,7 @@ import { useNotesStore } from '../stores/note';
 import type { Note } from '../stores/note';
 import { useRoute} from 'vue-router';
 import { computed, reactive, ref } from 'vue';
+import { useToastStore } from '../stores/toast';
 
 const props = defineProps({
   visible: Boolean,
@@ -19,30 +20,23 @@ const form = reactive({
   title: note.value?.title ?? '',
   content: note.value?.content.join('\n') ?? ''
 })
-const modif = ref(false)
+const isSubmitting = ref(false)
+
 const submit = async () => {
+  isSubmitting.value = true
   await store.modifierNote(id,{
       title: form.title,
       content: [form.content]
     })
   emit('close')
   emit('succesModif')
-
+  isSubmitting.value = false
+  const toast = useToastStore()
+  toast.add('La note a été modifiée avec succès.')
 }
 </script>
 
 <template>
-  <!--alert modif-->
-  <div v-if="modif" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center gap-4 w-80">
-      <div class="bg-green-100 rounded-full p-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-        <p class="text-gray-400 text-sm text-center">La note a été modifiée avec succès.</p>
-    </div>
-</div>
   <div v-if="visible" class="modal-background">
       <div class="modal-container">
 
@@ -61,8 +55,12 @@ const submit = async () => {
             <button  @click="$emit('close')"  class="w-full md:w-36 h-10 rounded-md border border-gray-300 bg-white text-gray-600 font-medium text-sm hover:bg-gray-100 active:scale-95 transition">
               Retour
             </button>
-            <button type ="submit" class="w-full md:w-36 h-10 rounded-md text-white bg-black font-medium text-sm  active:scale-95 transition">
-              Enregistrer
+            <button type ="submit" :disabled="isSubmitting" class="w-full md:w-36 h-10 rounded-md text-white bg-black font-medium text-sm active:scale-95 transition flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed">
+              <span v-if="!isSubmitting">Enregistrer</span>
+              <svg v-else class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
             </button>
           </div>
         </form>

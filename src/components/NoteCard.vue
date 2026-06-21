@@ -1,17 +1,5 @@
 
 <template>
-  <!--alert suppression-->
-  <div v-if="supprime" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-    <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center gap-4 w-80">
-      <div class="bg-green-100 rounded-full p-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-      </div>
-        <p class="text-gray-400 text-sm text-center">La note a été supprimée avec succès.</p>
-    </div>
-</div>
-
   <div :style="{ backgroundColor: bgCard, transform: `rotate(${rotation}deg)` }"
     class=" card border text-sm text-gray-500 w-full lg:basis-[calc(33.333%-1rem)]">
     <div ref="div" class="flex flex-col items-center gap-4 w-full p-4 pb-2  border-dashed border-b  border-gray-500/20">
@@ -23,18 +11,34 @@
         {{ new Date(createdAt).toLocaleDateString('fr-FR', options) }}
       </p>
       <div>
-        <Button nomButton="Détails" @BtnDetail = 'detail' class="mr-4"/>
-        <Button nomButton="Supprimer" @BtnSupp = 'supprimer'  />
+        <Button @click='detail' class="mr-4">
+          <Eye class="text-white"/>
+        </Button>
+        <Button @click='showConfirm = true'>
+          <Trash2 class="text-white"/>
+        </Button>
       </div>
     </div>
   </div>
+
+  <Teleport to="body">
+    <ConfirmModal 
+      :visible="showConfirm" 
+      :loading="isDeleting"
+      @cancel="showConfirm = false" 
+      @confirm="supprimer" 
+    />
+  </Teleport>
 </template>
 
 <script setup lang="ts">
 import Button from './Button.vue';
+import ConfirmModal from './ConfirmModal.vue';
 import { useNotesStore } from '../stores/note'
+import { useToastStore } from '../stores/toast'
 import { useRouter } from 'vue-router'
-import {ref} from 'vue'
+import { Eye, Trash2 } from '@lucide/vue'
+import { ref } from 'vue'
 
 const router = useRouter()
 
@@ -64,12 +68,16 @@ const options = {
 } as const;
 
 const store = useNotesStore()
-const supprime = ref(false)
+const toast = useToastStore()
+const showConfirm = ref(false)
+const isDeleting = ref(false)
 
 async function supprimer() {
+  isDeleting.value = true;
   await store.supprimerNote(props.id);
-  supprime.value = true;
-  setTimeout(() => supprime.value = false, 3000);
+  isDeleting.value = false;
+  showConfirm.value = false;
+  toast.add('La note a été supprimée avec succès.');
 }
 
 function detail() {

@@ -31,19 +31,6 @@ export const useNotesStore = defineStore('notes', () => {
         }
     }
 
-  async function detailNote(id: string) {
-    loading.value = true
-    try {
-      const res = await fetch(`${BASE_URL}/notes/${id}`)
-      const data = await res.json()
-      notes.value = data.notes
-      console.log(notes.value)
-    } catch (e) {
-      error.value = (e as Error).message
-    } finally {
-      loading.value = false
-    }
-  }
 
     async function ajouterNote(note: Omit<Note, '_id' | 'createdAt' | 'updatedAt'>) {
         try {
@@ -84,5 +71,5 @@ export const useNotesStore = defineStore('notes', () => {
         }
     }
 
-    return { notes, loading, error, search, fetchNotes,detailNote, ajouterNote, supprimerNote, modifierNote }
+    return { notes, loading, error, search, fetchNotes, ajouterNote, supprimerNote, modifierNote }
 })
